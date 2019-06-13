@@ -1,4 +1,4 @@
-# SPI FRAM STRINGS STUFF
+# SPI Non-Volatile FRAM Strings Stuff
 import board
 import busio
 import digitalio
