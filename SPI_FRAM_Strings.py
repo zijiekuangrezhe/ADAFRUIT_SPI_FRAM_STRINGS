@@ -18,17 +18,18 @@ fram = adafruit_fram.FRAM_SPI(spi_bus, spi_cs, write_protect=False, wp_pin=None,
 
 byteArrayRange = len(fram) # 8192 Bytes
 
+
 def spiFramReset(startAddress, resetLength):
     if((startAddress < 0) or (startAddress > 8191)):
-        print("-> ERROR: startAddress must be between 0 and {}.".format(byteArrayRange - 1), end="")
+        print("-> ERROR: startAddress must be between 0 and {}.".format(byteArrayRange - 1),end="")
     else:
         if(resetLength > byteArrayRange):
-            print("-> ERROR: Can't reset more than the space on the FRAM Chip, which is 8192 bytes...", end="")
+            print("-> ERROR: Can't reset more than the space on the FRAM Chip, which is 8192 bytes...",end="")
         else:
             if(startAddress + resetLength > byteArrayRange):
                 print("-> ERROR: Can't reset chosen space!"
-                + " startAddress must be less than or equal to {}.".format(byteArrayRange - resetLength)
-                + " Missing {} Byte(s).".format(startAddress + resetLength - byteArrayRange), end="")
+                + " startAddress must be smaller than or equal to {}.".format(byteArrayRange - resetLength)
+                + " Missing {} Byte(s).".format(startAddress + resetLength - byteArrayRange),end="")
             else:
                 print("-> Performing {} Bytes Reset from Address {}...".format(resetLength, startAddress))
                 startTime = time.time()
@@ -38,6 +39,7 @@ def spiFramReset(startAddress, resetLength):
                 print("-> {} Bytes Reset in about {} Seconds.".format(resetLength, elapsedTime))
     return
 
+
 def spiFramWrite(stringToWrite, startAddress, startSeparator, endSeparator): # Decide if string is short or long.
     if(len(stringToWrite) < 968): # Safe Short String Value
         spiFramWriteShortStrings(stringToWrite, startAddress, startSeparator, endSeparator)
@@ -45,12 +47,13 @@ def spiFramWrite(stringToWrite, startAddress, startSeparator, endSeparator): # D
         spiFramWriteLongStings(stringToWrite, startAddress, startSeparator, endSeparator)
     return
 
+
 def spiFramWriteShortStrings(stringToWrite, startAddress, startSeparator, endSeparator):
     if(startAddress + len(startSeparator) + len(stringToWrite) + len(endSeparator) > byteArrayRange - 1):
         print("-> ERROR: Can't fit text into chosen space!"
-        + " startAddress must be less than or equal to {}. Missing {} Byte(s)."
+        + " startAddress must be less smaller or equal to {}. Missing {} Byte(s)."
         .format(byteArrayRange - (len(startSeparator) + len(stringToWrite) + len(endSeparator)) - 1,
-        startAddress + len(startSeparator) + len(stringToWrite) + len(endSeparator) + 1 - byteArrayRange), end="")
+        startAddress + len(startSeparator) + len(stringToWrite) + len(endSeparator) + 1 - byteArrayRange),end="")
     else:
         print("-> Writing {} Bytes from FRAM Address {} to {}..."
         .format(len(startSeparator) + len(stringToWrite) + len(endSeparator), startAddress,
@@ -67,12 +70,13 @@ def spiFramWriteShortStrings(stringToWrite, startAddress, startSeparator, endSep
         del(stringToWrite)
     return
 
+
 def spiFramWriteLongStings(stringToWrite, startAddress, startSeparator, endSeparator):
     if(startAddress + len(startSeparator) + len(stringToWrite) + len(endSeparator) > byteArrayRange - 1):
         print("-> ERROR: Can't fit text into chosen space!"
         + " startAddress must be less than or equal to {}. Missing {} Byte(s)."
         .format(byteArrayRange - (len(startSeparator) + len(stringToWrite) + len(endSeparator)) - 1,
-        startAddress + len(startSeparator) + len(stringToWrite) + len(endSeparator) + 1 - byteArrayRange), end="")
+        startAddress + len(startSeparator) + len(stringToWrite) + len(endSeparator) + 1 - byteArrayRange),end="")
     else:
         print("-> Writing {} Bytes from FRAM Address {} to {}..."
         .format(len(startSeparator) + len(stringToWrite) + len(endSeparator), startAddress,
@@ -90,32 +94,34 @@ def spiFramWriteLongStings(stringToWrite, startAddress, startSeparator, endSepar
         del(stringToWrite)
     return
 
+
 def spiFramRead(startAddress):
-    print("-> Reading & Printing FRAM Until First Empty Byte:", end="\n\n")
+    print("-> Reading & Printing FRAM Until First Empty Byte:",end="\n\n")
     startTime = time.time()
     print("{START}", end="\n")
     stringToRead = ""
     position = 0
     while(fram[startAddress + position][0] != 0xff):
-        print(chr(fram[startAddress + position][0]), end="")
+        print(chr(fram[startAddress + position][0]),end="")
         position += 1
     if(position == 0):
-        print("{END}", end="")
+        print("{END}",end="")
     else:
-        print("\n{END}", end="")
+        print("\n{END}",end="")
     elapsedTime = time.time() - startTime
     print("\n\n-> {} Bytes Read in about {} Seconds.".format(position, elapsedTime))
     del(stringToRead)
     return
 
+
 def spiFramPrintWhole():
-    print("-> Reading & Printing the Whole {} Bytes FRAM Data:".format(byteArrayRange), end="\n\n")
+    print("-> Reading & Printing the Whole {} Bytes FRAM Data:".format(byteArrayRange),end="\n\n")
     startTime = time.time()
     print("{START}", end="\n")
     empty = True
     for position in range(len(fram)):
         if(fram[position][0] != 0xff):
-            print(chr(fram[position][0]), end="")
+            print(chr(fram[position][0]),end="")
             empty = False
         else:
             print("", end="")
@@ -136,4 +142,3 @@ spiFramReset(startAddress=0, resetLength=8192)
 spiFramWrite(stringToWrite, startAddress=0, startSeparator="", endSeparator="")
 spiFramRead(0)
 #spiFramPrintWhole()
-# END OF SCRIPT
