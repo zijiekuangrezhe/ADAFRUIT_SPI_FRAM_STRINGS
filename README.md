@@ -6,6 +6,6 @@ I heard that text writing and reading on Non-Volatile Adafruit FRAM Breakout boa
 
 So, I thought I would offer an easy-to-understand way to do String manipulation on an FRAM Chip in CircuitPython.
 
-Enjoy!!!
+Enjoy :)
 
--ByteZealot1337
+Zì Jié Kuángrè Zhě
